@@ -128,17 +128,126 @@ class AnalyticsSummary(BaseModel):
     private_directive_count: int
     public_directive_count: int
 
+# ── Misc ──────────────────────────────────────────────────────────────────────
+
+class MiscUpdate(BaseModel):
+    group_name: str | None = Field(default=None, max_length=255)
+    header_image: str | None = Field(default=None, max_length=1024)
+    total: int | None = None
+    total_at_end_of_prev_period: int | None = None
+
+
+class MiscResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    group_name: str
+    header_image: str | None
+    total: int
+    total_at_end_of_prev_period: int
+
+
 # ── Transactions ────────────────────────────────────────────────────────────
 
-class TransactionCreateUpdate(BaseModel):
-    transaction_name: str
+class TransactionCreate(BaseModel):
+    transaction_name: str = Field(min_length=1, max_length=512)
     delegates: list[int]
     delta: int
 
+
+class TransactionUpdate(BaseModel):
+    transaction_name: str | None = Field(default=None, min_length=1, max_length=512)
+    delegates: list[int] | None = None
+    delta: int | None = None
+
+
 class TransactionResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     period_id: int
     transaction_name: str
     delegates: list[int]
     delta: int
     created_at: datetime
+
+
+# ── Posts ─────────────────────────────────────────────────────────────────────
+
+class PostCreate(BaseModel):
+    user_name: str = Field(min_length=1, max_length=255)
+    min_ago: int = Field(ge=0)
+    message: str = Field(min_length=1)
+    likes: int = Field(default=0, ge=0)
+    reply_to_id: int | None = None
+    is_artist: bool = False
+
+
+class PostUpdate(BaseModel):
+    user_name: str | None = Field(default=None, min_length=1, max_length=255)
+    min_ago: int | None = Field(default=None, ge=0)
+    message: str | None = Field(default=None, min_length=1)
+    likes: int | None = Field(default=None, ge=0)
+    reply_to_id: int | None = None
+    is_artist: bool | None = None
+
+
+class PostResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    period_id: int
+    user_name: str
+    min_ago: int
+    message: str
+    likes: int
+    reply_to_id: int | None
+    is_artist: bool
+
+
+# ── Notices ───────────────────────────────────────────────────────────────────
+
+class NoticeCreate(BaseModel):
+    min_ago: int = Field(ge=0)
+    message: str = Field(min_length=1)
+    likes: int = Field(default=0, ge=0)
+
+
+class NoticeUpdate(BaseModel):
+    min_ago: int | None = Field(default=None, ge=0)
+    message: str | None = Field(default=None, min_length=1)
+    likes: int | None = Field(default=None, ge=0)
+
+
+class NoticeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    period_id: int
+    min_ago: int
+    message: str
+    likes: int
+
+
+# ── Items ─────────────────────────────────────────────────────────────────────
+
+class ItemCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=512)
+    cost: int = Field(ge=0)
+    photo: str | None = Field(default=None, max_length=1024)
+
+
+class ItemUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=512)
+    cost: int | None = Field(default=None, ge=0)
+    photo: str | None = Field(default=None, max_length=1024)
+
+
+class ItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    period_id: int
+    title: str
+    cost: int
+    photo: str | None
