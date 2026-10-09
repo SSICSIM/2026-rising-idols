@@ -127,3 +127,18 @@ class AnalyticsSummary(BaseModel):
     priority_distribution: list[PriorityCount]
     private_directive_count: int
     public_directive_count: int
+
+# ── Transactions ────────────────────────────────────────────────────────────
+
+class TransactionCreateUpdate(BaseModel):
+    transaction_name: str
+    delegates: list[int]
+    delta: int
+
+class TransactionResponse(BaseModel):
+    id: int
+    period_id: int
+    transaction_name: str
+    delegates: list[int]
+    delta: int
+    created_at: datetime
