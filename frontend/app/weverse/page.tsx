@@ -1,5 +1,5 @@
-import { FanPostsView } from "@/components/weverse/FanPostsView";
+import { PostsView } from "@/components/weverse/PostsView";
 
 export default function Page() {
-  return <FanPostsView />;
+  return <PostsView />;
 }

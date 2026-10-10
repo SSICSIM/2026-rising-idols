@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useCreatePost } from "@/hooks/usePosts";
 import type { PostResponse } from "@/types/api";
@@ -25,6 +26,7 @@ const EMPTY = { user_name: "", min_ago: "", message: "", likes: "" };
 
 export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
   const [form, setForm] = useState(EMPTY);
+  const [isArtist, setIsArtist] = useState(false);
   const { mutate, isPending } = useCreatePost();
 
   function set(key: keyof typeof EMPTY, value: string) {
@@ -33,6 +35,7 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
 
   function close() {
     setForm(EMPTY);
+    setIsArtist(false);
     onOpenChange(false);
   }
 
@@ -46,6 +49,7 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
         message: form.message.trim(),
         likes: form.likes === "" ? 0 : Number(form.likes),
         reply_to_id: replyTo?.id ?? null,
+        is_artist: isArtist,
       },
       { onSuccess: close },
     );
@@ -85,6 +89,10 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
               value={form.likes}
               onChange={(e) => set("likes", e.target.value)}
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox id="post-is-artist" checked={isArtist} onCheckedChange={(v) => setIsArtist(v === true)} />
+            <Label htmlFor="post-is-artist">Posted by an artist</Label>
           </div>
           <DialogFooter>
             <Button

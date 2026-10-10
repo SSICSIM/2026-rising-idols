@@ -161,7 +161,7 @@ export interface MiscUpdate {
   total_at_end_of_prev_period?: number;
 }
 
-// ── Posts (Weverse fan posts) ─────────────────────────────────────────────────
+// ── Posts (Weverse posts) ─────────────────────────────────────────────────
 
 export interface PostResponse {
   id: number;

@@ -5,6 +5,7 @@ import { Heart, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAddButtons } from "@/components/AddButtonsContext";
+import { cn } from "@/lib/utils";
 import { useActivePeriod } from "@/hooks/useCrisisPeriods";
 import { useShowPreviousPeriods } from "@/components/ShowPreviousPeriodsContext";
 import { useDeletePost, usePosts } from "@/hooks/usePosts";
@@ -25,12 +26,20 @@ function PostCard({
 }) {
   const { showAddButtons } = useAddButtons();
   return (
-    <div className={nested ? "bg-muted/60 ml-12 rounded-md p-3" : "bg-muted rounded-md p-3"}>
+    <div
+      className={cn(
+        "rounded-md p-3",
+        nested && "ml-12",
+        post.is_artist
+          ? "bg-[#D99A0B]/20 ring-1 ring-[#D99A0B]/50"
+          : nested ? "bg-muted/60" : "bg-muted",
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 space-y-1">
           <p className="text-xs font-bold">
             {post.user_name}
-            {post.is_artist && <span className="ml-1.5 text-[10px] text-[#D99A0B]">ARTIST</span>}
+            {post.is_artist && <span className="ml-1.5 text-[10px] font-semibold text-[#B98208]">ARTIST</span>}
           </p>
           <p className="text-muted-foreground text-[10px]">{post.min_ago} min ago</p>
         </div>
@@ -55,7 +64,7 @@ function PostCard({
   );
 }
 
-export function FanPostsView() {
+export function PostsView() {
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [replyTo, setReplyTo] = useState<PostResponse | null>(null);
@@ -66,7 +75,7 @@ export function FanPostsView() {
   const { data: posts = [], isLoading } = usePosts(showPreviousPeriods ? undefined : (activePeriod?.id ?? null));
   const { mutate: removePost } = useDeletePost();
 
-  // Top-level posts in order, each followed by its replies.
+  // Top-level posts, most recent first, each followed by its replies.
   const threads = useMemo(() => {
     const q = search.trim().toLowerCase();
     const matches = (p: PostResponse) =>
@@ -77,10 +86,13 @@ export function FanPostsView() {
         replies.set(p.reply_to_id, [...(replies.get(p.reply_to_id) ?? []), p]);
       }
     }
+    // min_ago counts minutes since posting, so the smallest value is the most recent.
+    const byRecency = (a: PostResponse, b: PostResponse) => a.min_ago - b.min_ago;
     return posts
       .filter((p) => p.reply_to_id == null)
       .filter((p) => matches(p) || (replies.get(p.id) ?? []).some(matches))
-      .map((p) => ({ post: p, replies: replies.get(p.id) ?? [] }));
+      .sort(byRecency)
+      .map((p) => ({ post: p, replies: [...(replies.get(p.id) ?? [])].sort(byRecency) }));
   }, [posts, search]);
 
   function openAdd(target: PostResponse | null) {

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { GroupSettingsDialog } from "./GroupSettingsDialog";
 
 const TABS = [
-  { href: "/weverse", label: "Fan Posts" },
+  { href: "/weverse", label: "Posts" },
   { href: "/weverse/notice", label: "Notice" },
   { href: "/weverse/shop", label: "Shop" },
 ];
