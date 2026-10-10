@@ -133,8 +133,8 @@ class AnalyticsSummary(BaseModel):
 class MiscUpdate(BaseModel):
     group_name: str | None = Field(default=None, max_length=255)
     header_image: str | None = Field(default=None, max_length=1024)
-    total: int | None = None
-    total_at_end_of_prev_period: int | None = None
+    total: float | None = None
+    total_at_end_of_prev_period: float | None = None
 
 
 class MiscResponse(BaseModel):
@@ -143,8 +143,8 @@ class MiscResponse(BaseModel):
     id: int
     group_name: str
     header_image: str | None
-    total: int
-    total_at_end_of_prev_period: int
+    total: float
+    total_at_end_of_prev_period: float
 
 
 # ── Transactions ────────────────────────────────────────────────────────────
@@ -152,13 +152,13 @@ class MiscResponse(BaseModel):
 class TransactionCreate(BaseModel):
     transaction_name: str = Field(min_length=1, max_length=512)
     delegates: list[int]
-    delta: int
+    delta: float
 
 
 class TransactionUpdate(BaseModel):
     transaction_name: str | None = Field(default=None, min_length=1, max_length=512)
     delegates: list[int] | None = None
-    delta: int | None = None
+    delta: float | None = None
 
 
 class TransactionResponse(BaseModel):
@@ -168,7 +168,7 @@ class TransactionResponse(BaseModel):
     period_id: int
     transaction_name: str
     delegates: list[int]
-    delta: int
+    delta: float
     created_at: datetime
 
 

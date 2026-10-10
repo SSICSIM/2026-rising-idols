@@ -13,15 +13,14 @@ router = APIRouter(prefix="/notices", tags=["notices"])
 
 @router.get("", response_model=list[NoticeResponse])
 def list_notices(
-    period_id: int = Query(...),
+    period_id: int | None = Query(default=None),
     db: Session = Depends(get_db),
 ) -> list[Notice]:
-    return (
-        db.query(Notice)
-        .filter(Notice.period_id == period_id)
-        .order_by(Notice.id.asc())
-        .all()
-    )
+    # Omitting period_id returns rows from every period.
+    query = db.query(Notice)
+    if period_id is not None:
+        query = query.filter(Notice.period_id == period_id)
+    return query.order_by(Notice.id.asc()).all()
 
 
 @router.post("", response_model=NoticeResponse, status_code=status.HTTP_201_CREATED)

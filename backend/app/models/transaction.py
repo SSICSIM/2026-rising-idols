@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import enum
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import ARRAY, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, text
+from sqlalchemy import ARRAY, Boolean, DateTime, ForeignKey, Index, Integer, Numeric, String, Text, text
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -21,5 +22,5 @@ class Transaction(Base):
     delegates: Mapped[list[int]] = mapped_column(
         ARRAY(Integer), nullable=False
     )
-    delta: Mapped[int] = mapped_column(Integer, nullable=False)
+    delta: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

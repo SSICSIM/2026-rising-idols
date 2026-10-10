@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.crisis_note import CrisisPeriod
+from app.models.misc import Misc
 from app.models.transaction import Transaction
 from app.schemas import TransactionCreate, TransactionResponse, TransactionUpdate
 
@@ -31,8 +34,12 @@ def create_transaction(body: TransactionCreate, db: Session = Depends(get_db)) -
         period_id=active_period.id,
         transaction_name=body.transaction_name,
         delegates=body.delegates,
-        delta=body.delta,
+        delta=Decimal(str(body.delta)),
     )
+    # The net worth total moves by the transaction's delta, in the same commit.
+    misc = db.get(Misc, 1) or Misc(id=1)
+    misc.total = (misc.total or 0) + Decimal(str(body.delta))
+    db.add(misc)
     db.add(transaction)
     db.commit()
     db.refresh(transaction)
@@ -58,5 +65,12 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db)) -> No
     transaction = db.get(Transaction, transaction_id)
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found.")
+    # Only transactions in the active period moved the running total, so only
+    # those are reversed here. Older periods' deltas are already in the snapshot.
+    active_period = db.query(CrisisPeriod).filter(CrisisPeriod.is_active.is_(True)).first()
+    if active_period and transaction.period_id == active_period.id:
+        misc = db.get(Misc, 1) or Misc(id=1)
+        misc.total = (misc.total or 0) - transaction.delta
+        db.add(misc)
     db.delete(transaction)
     db.commit()

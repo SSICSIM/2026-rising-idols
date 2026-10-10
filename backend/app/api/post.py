@@ -24,15 +24,14 @@ def _check_reply_target(db: Session, reply_to_id: int | None, period_id: int, po
 
 @router.get("", response_model=list[PostResponse])
 def list_posts(
-    period_id: int = Query(...),
+    period_id: int | None = Query(default=None),
     db: Session = Depends(get_db),
 ) -> list[Post]:
-    return (
-        db.query(Post)
-        .filter(Post.period_id == period_id)
-        .order_by(Post.id.asc())
-        .all()
-    )
+    # Omitting period_id returns rows from every period.
+    query = db.query(Post)
+    if period_id is not None:
+        query = query.filter(Post.period_id == period_id)
+    return query.order_by(Post.id.asc()).all()
 
 
 @router.post("", response_model=PostResponse, status_code=status.HTTP_201_CREATED)

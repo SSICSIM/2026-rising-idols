@@ -13,15 +13,14 @@ router = APIRouter(prefix="/items", tags=["items"])
 
 @router.get("", response_model=list[ItemResponse])
 def list_items(
-    period_id: int = Query(...),
+    period_id: int | None = Query(default=None),
     db: Session = Depends(get_db),
 ) -> list[Item]:
-    return (
-        db.query(Item)
-        .filter(Item.period_id == period_id)
-        .order_by(Item.id.asc())
-        .all()
-    )
+    # Omitting period_id returns rows from every period.
+    query = db.query(Item)
+    if period_id is not None:
+        query = query.filter(Item.period_id == period_id)
+    return query.order_by(Item.id.asc()).all()
 
 
 @router.post("", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)

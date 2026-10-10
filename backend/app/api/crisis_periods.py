@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.crisis_note import CrisisPeriod
+from app.models.misc import Misc
 from app.schemas import CrisisPeriodCreate, CrisisPeriodResponse
 
 
@@ -68,6 +69,10 @@ def archive_period(period_id: int, db: Session = Depends(get_db)) -> CrisisPerio
     period.archived_at = datetime.now(timezone.utc)
     next_period = CrisisPeriod(name=_next_period_name(period.name), is_active=True)
     db.add(next_period)
+    # Snapshot the running total so the next period's diff is measured from here.
+    misc = db.get(Misc, 1) or Misc(id=1)
+    misc.total_at_end_of_prev_period = misc.total or 0
+    db.add(misc)
     db.commit()
     db.refresh(next_period)
     return next_period
