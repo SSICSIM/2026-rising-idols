@@ -39,6 +39,8 @@ export function useArchivePeriod() {
     mutationFn: (id: number) => crisisPeriodsService.archive(id),
     onSuccess: (newPeriod) => {
       qc.invalidateQueries({ queryKey: ["periods"] });
+      // Archiving snapshots the net worth total on the backend.
+      qc.invalidateQueries({ queryKey: ["misc"] });
       toast.success(`Next round started: ${newPeriod.name}`);
     },
     onError: (err: Error) => toast.error(err.message || "Failed to archive period."),
