@@ -120,3 +120,97 @@ export interface AnalyticsSummary {
   private_directive_count: number;
   public_directive_count: number;
 }
+
+// ── Transactions ──────────────────────────────────────────────────────────────
+
+export interface TransactionResponse {
+  id: number;
+  period_id: number;
+  transaction_name: string;
+  delegates: number[];
+  delta: number;
+  created_at: string;
+}
+
+export interface TransactionCreate {
+  transaction_name: string;
+  delegates: number[];
+  delta: number;
+}
+
+export interface TransactionUpdate {
+  transaction_name?: string;
+  delegates?: number[];
+  delta?: number;
+}
+
+// ── Misc (single row: group name, header image, net worth totals) ─────────────
+
+export interface MiscResponse {
+  id: number;
+  group_name: string;
+  header_image: string | null;
+  total: number;
+  total_at_end_of_prev_period: number;
+}
+
+export interface MiscUpdate {
+  group_name?: string;
+  header_image?: string | null;
+  total?: number;
+  total_at_end_of_prev_period?: number;
+}
+
+// ── Posts (Weverse fan posts) ─────────────────────────────────────────────────
+
+export interface PostResponse {
+  id: number;
+  period_id: number;
+  user_name: string;
+  min_ago: number;
+  message: string;
+  likes: number;
+  reply_to_id: number | null;
+  is_artist: boolean;
+}
+
+export interface PostCreate {
+  user_name: string;
+  min_ago: number;
+  message: string;
+  likes?: number;
+  reply_to_id?: number | null;
+  is_artist?: boolean;
+}
+
+// ── Notices ───────────────────────────────────────────────────────────────────
+
+export interface NoticeResponse {
+  id: number;
+  period_id: number;
+  min_ago: number;
+  message: string;
+  likes: number;
+}
+
+export interface NoticeCreate {
+  min_ago: number;
+  message: string;
+  likes?: number;
+}
+
+// ── Shop items ────────────────────────────────────────────────────────────────
+
+export interface ItemResponse {
+  id: number;
+  period_id: number;
+  title: string;
+  cost: number;
+  photo: string | null;
+}
+
+export interface ItemCreate {
+  title: string;
+  cost: number;
+  photo?: string | null;
+}
