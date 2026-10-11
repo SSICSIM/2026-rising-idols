@@ -233,13 +233,13 @@ class NoticeResponse(BaseModel):
 
 class ItemCreate(BaseModel):
     title: str = Field(min_length=1, max_length=512)
-    cost: int = Field(ge=0)
+    cost: float = Field(ge=0)
     photo: str | None = Field(default=None, max_length=1024)
 
 
 class ItemUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=512)
-    cost: int | None = Field(default=None, ge=0)
+    cost: float | None = Field(default=None, ge=0)
     photo: str | None = Field(default=None, max_length=1024)
 
 
@@ -249,5 +249,5 @@ class ItemResponse(BaseModel):
     id: int
     period_id: int
     title: str
-    cost: int
+    cost: float
     photo: str | None

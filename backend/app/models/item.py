@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer, String
+from decimal import Decimal
+
+from sqlalchemy import ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -14,5 +16,5 @@ class Item(Base):
         ForeignKey("crisis_periods.id", ondelete="RESTRICT"), nullable=False
     )
     title: Mapped[str] = mapped_column(String(512), nullable=False)
-    cost: Mapped[int] = mapped_column(Integer, nullable=False)
+    cost: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
     photo: Mapped[str | None] = mapped_column(String(1024), nullable=True)

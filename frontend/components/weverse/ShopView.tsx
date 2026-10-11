@@ -66,6 +66,7 @@ function AddItemDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
               id="item-cost"
               type="number"
               min={0}
+              step="any"
               value={form.cost}
               onChange={(e) => set("cost", e.target.value)}
             />
@@ -161,7 +162,7 @@ export function ShopView() {
               )}
             </div>
             <p className="mt-2 text-xs font-bold">{item.title}</p>
-            <p className="text-muted-foreground text-xs tabular-nums">${item.cost}</p>
+            <p className="text-muted-foreground text-xs tabular-nums">${item.cost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
           </div>
         ))}
       </div>
