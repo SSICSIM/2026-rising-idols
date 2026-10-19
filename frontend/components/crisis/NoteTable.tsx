@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { CrisisNoteResponse } from "@/types/api";
+import { NoteDetailDialog } from "./NoteDetailDialog";
 import { NoteTypeBadge } from "./NoteTypeBadge";
 import { PriorityBadge } from "./PriorityBadge";
 
@@ -34,6 +35,7 @@ interface Props {
 
 export function NoteTable({ notes, readOnly = false, onEdit, onDelete }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [detailNote, setDetailNote] = useState<CrisisNoteResponse | null>(null);
 
   if (notes.length === 0) {
     return (
@@ -58,7 +60,11 @@ export function NoteTable({ notes, readOnly = false, onEdit, onDelete }: Props) 
           </TableHeader>
           <TableBody>
             {notes.map((note) => (
-              <TableRow key={note.id}>
+              <TableRow
+                key={note.id}
+                className="cursor-pointer"
+                onClick={() => setDetailNote(note)}
+              >
                 <TableCell className="font-medium whitespace-nowrap">
                   {note.character.name}
                 </TableCell>
@@ -91,7 +97,10 @@ export function NoteTable({ notes, readOnly = false, onEdit, onDelete }: Props) 
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
-                        onClick={() => onEdit?.(note)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit?.(note);
+                        }}
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
@@ -99,7 +108,10 @@ export function NoteTable({ notes, readOnly = false, onEdit, onDelete }: Props) 
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 hover:text-destructive"
-                        onClick={() => setDeleteTarget(note.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteTarget(note.id);
+                        }}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -111,6 +123,8 @@ export function NoteTable({ notes, readOnly = false, onEdit, onDelete }: Props) 
           </TableBody>
         </Table>
       </div>
+
+      <NoteDetailDialog note={detailNote} onOpenChange={(open) => !open && setDetailNote(null)} />
 
       <AlertDialog open={deleteTarget !== null} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent>
