@@ -12,7 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { ImagePlus } from "lucide-react";
 import { useCreatePost } from "@/hooks/usePosts";
+import { toDirectImageUrl } from "@/lib/photoUrl";
 import type { PostResponse } from "@/types/api";
 
 interface Props {
@@ -22,11 +24,12 @@ interface Props {
   replyTo?: PostResponse | null;
 }
 
-const EMPTY = { user_name: "", min_ago: "", message: "", likes: "" };
+const EMPTY = { user_name: "", min_ago: "", message: "", likes: "", image: "" };
 
 export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
   const [form, setForm] = useState(EMPTY);
   const [isArtist, setIsArtist] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const { mutate, isPending } = useCreatePost();
 
   function set(key: keyof typeof EMPTY, value: string) {
@@ -36,6 +39,7 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
   function close() {
     setForm(EMPTY);
     setIsArtist(false);
+    setShowImage(false);
     onOpenChange(false);
   }
 
@@ -50,6 +54,7 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
         likes: form.likes === "" ? 0 : Number(form.likes),
         reply_to_id: replyTo?.id ?? null,
         is_artist: isArtist,
+        image: form.image.trim() ? toDirectImageUrl(form.image) : null,
       },
       { onSuccess: close },
     );
@@ -89,6 +94,32 @@ export function AddPostDialog({ open, onOpenChange, replyTo }: Props) {
               value={form.likes}
               onChange={(e) => set("likes", e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowImage((s) => !s)}
+              className="border-[#D99A0B] text-[#B98208]"
+            >
+              <ImagePlus className="mr-2 h-4 w-4" />
+              Add Image
+            </Button>
+            {showImage && (
+              <div className="space-y-1.5">
+                <Label htmlFor="post-image">Google Drive or image link</Label>
+                <Input
+                  id="post-image"
+                  placeholder="https://drive.google.com/file/d/…"
+                  value={form.image}
+                  onChange={(e) => set("image", e.target.value)}
+                />
+                <p className="text-muted-foreground text-xs">
+                  Set the file to &ldquo;Anyone with the link&rdquo; in Drive so it can display.
+                </p>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Checkbox id="post-is-artist" checked={isArtist} onCheckedChange={(v) => setIsArtist(v === true)} />

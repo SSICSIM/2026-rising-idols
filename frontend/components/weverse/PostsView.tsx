@@ -50,6 +50,7 @@ function PostCard({
         )}
       </div>
       <p className="mt-3 text-sm whitespace-pre-wrap">{post.message}</p>
+      {post.image && <img src={post.image} alt="" className="mt-3 w-full rounded-md" />}
       <div className="mt-3 flex items-center justify-between">
         <p className="text-muted-foreground flex items-center gap-1 text-xs tabular-nums">
           <Heart className="h-3 w-3" /> {post.likes.toLocaleString()}
@@ -86,8 +87,8 @@ export function PostsView() {
         replies.set(p.reply_to_id, [...(replies.get(p.reply_to_id) ?? []), p]);
       }
     }
-    // min_ago counts minutes since posting, so the smallest value is the most recent.
-    const byRecency = (a: PostResponse, b: PostResponse) => a.min_ago - b.min_ago;
+    // Newest insertion first; ids increase with each insert.
+    const byRecency = (a: PostResponse, b: PostResponse) => b.id - a.id;
     return posts
       .filter((p) => p.reply_to_id == null)
       .filter((p) => matches(p) || (replies.get(p.id) ?? []).some(matches))

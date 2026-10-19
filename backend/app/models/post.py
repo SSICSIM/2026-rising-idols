@@ -22,3 +22,4 @@ class Post(Base):
         ForeignKey("posts.id", ondelete="SET NULL"), nullable=True
     )
     is_artist: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    image: Mapped[str | None] = mapped_column(String(1024), nullable=True)

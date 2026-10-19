@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImagePlus } from "lucide-react";
+import { toDirectImageUrl } from "@/lib/photoUrl";
 import { useMisc } from "@/hooks/useMisc";
 import { useCreateNotice, useDeleteNotice, useNotices } from "@/hooks/useNotices";
 import { useAddButtons } from "@/components/AddButtonsContext";
@@ -19,10 +21,11 @@ import { useActivePeriod } from "@/hooks/useCrisisPeriods";
 import { useShowPreviousPeriods } from "@/components/ShowPreviousPeriodsContext";
 import { WeverseLayout } from "./WeverseLayout";
 
-const EMPTY = { min_ago: "", message: "", likes: "" };
+const EMPTY = { min_ago: "", message: "", likes: "", image: "" };
 
 function AddNoticeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [form, setForm] = useState(EMPTY);
+  const [showImage, setShowImage] = useState(false);
   const { mutate, isPending } = useCreateNotice();
 
   function set(key: keyof typeof EMPTY, value: string) {
@@ -31,6 +34,7 @@ function AddNoticeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   function close() {
     setForm(EMPTY);
+    setShowImage(false);
     onOpenChange(false);
   }
 
@@ -42,6 +46,7 @@ function AddNoticeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
         min_ago: Number(form.min_ago),
         message: form.message.trim(),
         likes: form.likes === "" ? 0 : Number(form.likes),
+        image: form.image.trim() ? toDirectImageUrl(form.image) : null,
       },
       { onSuccess: close },
     );
@@ -77,6 +82,32 @@ function AddNoticeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
               value={form.likes}
               onChange={(e) => set("likes", e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowImage((s) => !s)}
+              className="border-[#D99A0B] text-[#B98208]"
+            >
+              <ImagePlus className="mr-2 h-4 w-4" />
+              Add Image
+            </Button>
+            {showImage && (
+              <div className="space-y-1.5">
+                <Label htmlFor="notice-image">Google Drive or image link</Label>
+                <Input
+                  id="notice-image"
+                  placeholder="https://drive.google.com/file/d/…"
+                  value={form.image}
+                  onChange={(e) => set("image", e.target.value)}
+                />
+                <p className="text-muted-foreground text-xs">
+                  Set the file to &ldquo;Anyone with the link&rdquo; in Drive so it can display.
+                </p>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isPending || !form.message.trim() || form.min_ago === ""}>
@@ -125,7 +156,10 @@ export function NoticesView() {
         {!isLoading && notices.length === 0 && (
           <p className="text-muted-foreground py-8 text-center text-sm">No notices yet.</p>
         )}
-        {notices.map((n) => (
+        {[...notices]
+          // Newest insertion first; ids increase with each insert.
+          .sort((a, b) => b.id - a.id)
+          .map((n) => (
           <div key={n.id} className="bg-muted rounded-md p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-1">
@@ -145,6 +179,7 @@ export function NoticesView() {
               )}
             </div>
             <p className="mt-3 text-sm whitespace-pre-wrap">{n.message}</p>
+            {n.image && <img src={n.image} alt="" className="mt-3 w-full rounded-md" />}
             <p className="text-muted-foreground mt-3 flex items-center gap-1 text-xs tabular-nums">
               <Heart className="h-3 w-3" /> {n.likes.toLocaleString()}
             </p>

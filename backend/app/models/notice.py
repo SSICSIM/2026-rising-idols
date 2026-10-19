@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer, Text
+from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -16,3 +16,4 @@ class Notice(Base):
     min_ago: Mapped[int] = mapped_column(Integer, nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     likes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    image: Mapped[str | None] = mapped_column(String(1024), nullable=True)

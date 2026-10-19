@@ -183,6 +183,7 @@ class PostCreate(BaseModel):
     likes: int = Field(default=0, ge=0)
     reply_to_id: int | None = None
     is_artist: bool = False
+    image: str | None = Field(default=None, max_length=1024)
 
 
 class PostUpdate(BaseModel):
@@ -192,6 +193,7 @@ class PostUpdate(BaseModel):
     likes: int | None = Field(default=None, ge=0)
     reply_to_id: int | None = None
     is_artist: bool | None = None
+    image: str | None = Field(default=None, max_length=1024)
 
 
 class PostResponse(BaseModel):
@@ -205,6 +207,7 @@ class PostResponse(BaseModel):
     likes: int
     reply_to_id: int | None
     is_artist: bool
+    image: str | None
 
 
 # ── Notices ───────────────────────────────────────────────────────────────────
@@ -213,12 +216,14 @@ class NoticeCreate(BaseModel):
     min_ago: int = Field(ge=0)
     message: str = Field(min_length=1)
     likes: int = Field(default=0, ge=0)
+    image: str | None = Field(default=None, max_length=1024)
 
 
 class NoticeUpdate(BaseModel):
     min_ago: int | None = Field(default=None, ge=0)
     message: str | None = Field(default=None, min_length=1)
     likes: int | None = Field(default=None, ge=0)
+    image: str | None = Field(default=None, max_length=1024)
 
 
 class NoticeResponse(BaseModel):
@@ -229,6 +234,7 @@ class NoticeResponse(BaseModel):
     min_ago: int
     message: str
     likes: int
+    image: str | None
 
 
 # ── Items ─────────────────────────────────────────────────────────────────────

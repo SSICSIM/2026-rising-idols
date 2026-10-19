@@ -174,6 +174,7 @@ export interface PostResponse {
   likes: number;
   reply_to_id: number | null;
   is_artist: boolean;
+  image: string | null;
 }
 
 export interface PostCreate {
@@ -183,6 +184,7 @@ export interface PostCreate {
   likes?: number;
   reply_to_id?: number | null;
   is_artist?: boolean;
+  image?: string | null;
 }
 
 // ── Notices ───────────────────────────────────────────────────────────────────
@@ -193,12 +195,14 @@ export interface NoticeResponse {
   min_ago: number;
   message: string;
   likes: number;
+  image: string | null;
 }
 
 export interface NoticeCreate {
   min_ago: number;
   message: string;
   likes?: number;
+  image?: string | null;
 }
 
 // ── Shop items ────────────────────────────────────────────────────────────────
