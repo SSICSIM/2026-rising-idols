@@ -149,6 +149,7 @@ export interface TransactionUpdate {
 export interface MiscResponse {
   id: number;
   group_name: string;
+  news_account_name: string;
   header_image: string | null;
   total: number;
   total_at_end_of_prev_period: number;
@@ -156,6 +157,7 @@ export interface MiscResponse {
 
 export interface MiscUpdate {
   group_name?: string;
+  news_account_name?: string;
   header_image?: string | null;
   total?: number;
   total_at_end_of_prev_period?: number;

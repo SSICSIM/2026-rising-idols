@@ -16,6 +16,7 @@ class Misc(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False, default=1)
     group_name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    news_account_name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     header_image: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     total: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=0)
     total_at_end_of_prev_period: Mapped[Decimal] = mapped_column(

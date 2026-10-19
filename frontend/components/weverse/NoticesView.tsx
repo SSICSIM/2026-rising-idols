@@ -98,7 +98,7 @@ export function NoticesView() {
   const { data: notices = [], isLoading } = useNotices(showPreviousPeriods ? undefined : (activePeriod?.id ?? null));
   const { mutate: removeNotice } = useDeleteNotice();
 
-  const groupName = misc?.group_name || "Group Name";
+  const newsAccountName = misc?.news_account_name || `${misc?.group_name || "Group Name"} News`;
 
   return (
     <WeverseLayout>
@@ -129,7 +129,7 @@ export function NoticesView() {
           <div key={n.id} className="bg-muted rounded-md p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-1">
-                <p className="text-xs font-bold uppercase">{groupName} News</p>
+                <p className="text-xs font-bold uppercase">{newsAccountName}</p>
                 <p className="text-muted-foreground text-[10px]">{n.min_ago} min ago</p>
               </div>
               {showAddButtons && (

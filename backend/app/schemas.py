@@ -132,6 +132,7 @@ class AnalyticsSummary(BaseModel):
 
 class MiscUpdate(BaseModel):
     group_name: str | None = Field(default=None, max_length=255)
+    news_account_name: str | None = Field(default=None, max_length=255)
     header_image: str | None = Field(default=None, max_length=1024)
     total: float | None = None
     total_at_end_of_prev_period: float | None = None
@@ -142,6 +143,7 @@ class MiscResponse(BaseModel):
 
     id: int
     group_name: str
+    news_account_name: str
     header_image: str | None
     total: float
     total_at_end_of_prev_period: float

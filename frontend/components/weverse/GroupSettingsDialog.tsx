@@ -23,6 +23,7 @@ interface Props {
 
 export function GroupSettingsDialog({ open, onOpenChange, misc }: Props) {
   const [groupName, setGroupName] = useState("");
+  const [newsAccountName, setNewsAccountName] = useState("");
   const [headerImage, setHeaderImage] = useState("");
   const { mutate, isPending } = useUpdateMisc();
 
@@ -30,6 +31,7 @@ export function GroupSettingsDialog({ open, onOpenChange, misc }: Props) {
   useEffect(() => {
     if (open) {
       setGroupName(misc?.group_name ?? "");
+      setNewsAccountName(misc?.news_account_name ?? "");
       setHeaderImage(misc?.header_image ?? "");
     }
   }, [open, misc]);
@@ -39,6 +41,7 @@ export function GroupSettingsDialog({ open, onOpenChange, misc }: Props) {
     mutate(
       {
         group_name: groupName.trim(),
+        news_account_name: newsAccountName.trim(),
         header_image: headerImage.trim() ? toDirectImageUrl(headerImage) : null,
       },
       { onSuccess: () => onOpenChange(false) },
@@ -59,6 +62,15 @@ export function GroupSettingsDialog({ open, onOpenChange, misc }: Props) {
               placeholder="Group Name"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="news-account-name">News account name</Label>
+            <Input
+              id="news-account-name"
+              placeholder="News Account Name"
+              value={newsAccountName}
+              onChange={(e) => setNewsAccountName(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
